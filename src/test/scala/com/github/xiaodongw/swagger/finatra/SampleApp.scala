@@ -10,6 +10,8 @@ import io.swagger.util.Json
 
 object SampleSwagger extends Swagger {
   Json.mapper().setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy)
+
+  Resolvers.register()
 }
 
 object SampleApp extends HttpServer {
@@ -29,6 +31,7 @@ object SampleApp extends HttpServer {
   override def configureHttp(router: HttpRouter) {
     router
       .filter[CommonFilters]
+      .add[WebjarsController]
       .add(new SwaggerController(swagger = SampleSwagger))
       .add[SampleController]
   }
