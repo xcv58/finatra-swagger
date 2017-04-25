@@ -14,7 +14,7 @@ class SampleFilter extends SimpleFilter[Request, Response] {
   }
 }
 
-class SampleController extends Controller with SwaggerSupport {
+class SampleController extends Controller with SwaggerController {
   override implicit protected val swagger = SampleSwagger
 
   case class HelloResponse(text: String, time: Date)

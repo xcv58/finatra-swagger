@@ -1,18 +1,12 @@
 package com.jakehschwartz.finatra.swagger
 
-import com.twitter.finagle.http.Request
-import com.twitter.finatra.http.Controller
-import io.swagger.models.Swagger
-import io.swagger.util.Json
+import com.twitter.finatra.http.{Controller, SwaggerRouteDSL}
 
-class SwaggerController(docPath: String = "/api-docs", swagger: Swagger) extends Controller {
-  get(s"${docPath}/model") { request: Request =>
-    response.ok.body(Json.mapper.writeValueAsString(swagger))
-      .contentType("application/json").toFuture
-  }
+trait SwaggerController extends SwaggerRouteDSL {
+  self: Controller =>
+  override protected val dsl = self
 
-  get(s"${docPath}/ui") { request: Request =>
-    response.temporaryRedirect
-        .location(s"/webjars/swagger-ui/2.2.8/index.html?url=${docPath}/model")
-  }
+  implicit protected val convertToFinatraOperation = FinatraOperation.convertToFinatraOperation _
+  implicit protected val convertToFinatraSwagger = FinatraSwagger.convertToFinatraSwagger _
+  implicit protected val convertToSwaggerRouteDSL = SwaggerRouteDSL.convertToSwaggerRouteDSL _
 }

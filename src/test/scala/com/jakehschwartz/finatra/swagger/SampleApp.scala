@@ -32,7 +32,7 @@ object SampleApp extends HttpServer {
     router
       .filter[CommonFilters]
       .add[WebjarsController]
-      .add(new SwaggerController(swagger = SampleSwagger))
+      .add(new DocsController(swagger = SampleSwagger))
       .add[SampleController]
   }
 }

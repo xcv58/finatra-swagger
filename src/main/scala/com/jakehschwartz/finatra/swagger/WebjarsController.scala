@@ -13,17 +13,11 @@ import com.twitter.util.Duration
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-object WebjarsController {
-  private val DEFAULT_EXPIRE_TIME_MS: Long = 86400000L // 1 day
-}
-
 class WebjarsController @Inject() (resolver: FileResolver) extends Controller {
-  import WebjarsController._
 
-  private val root: String = "/webjars"
-  private val disableCache: Boolean = false
+  private val DEFAULT_EXPIRE_TIME_MS: Long = 86400000L // 1 day
 
-  get(s"${root}/:*") { request: Request =>
+  get("webjars/:*") { request: Request =>
     val resourcePath = request.getParam("*")
 
     val webjarsResourceURI: String = "/META-INF/resources/webjars/" + resourcePath
@@ -34,31 +28,24 @@ class WebjarsController @Inject() (resolver: FileResolver) extends Controller {
     } else {
       val eTagNameTry = Try(getETagName(webjarsResourceURI))
       eTagNameTry match {
-        case Failure(e) =>
-          response.notFound
+        case Failure(_) => response.notFound
         case Success(eTagName) =>
-          if (!disableCache) {
-            if (checkETagMatch(request, eTagName) || checkLastModify(request)) {
-              response.notModified
-            } else {
-              val inputStream = getClass.getResourceAsStream(webjarsResourceURI)
-              if (inputStream != null) {
-                val resp = response.ok
-                try {
-                  if (!disableCache) {
-                    prepareCacheHeaders(resp, eTagName)
-                  }
-                  val filename: String = getFileName(webjarsResourceURI)
-                  resp.mediaType = resolver.getContentType(filename)
-                  resp.body(inputStream)
-                } finally {
-                  inputStream.close
-                }
-              }
-              else {
-                response.notFound
+          if (checkETagMatch(request, eTagName) || checkLastModify(request)) {
+            response.notModified
+          } else {
+            val inputStream = getClass.getResourceAsStream(webjarsResourceURI)
+            if (inputStream != null) {
+              val resp = response.ok
+              try {
+                prepareCacheHeaders(resp, eTagName)
+                val filename = getFileName(webjarsResourceURI)
+                resp.mediaType = resolver.getContentType(filename)
+                resp.body(inputStream)
+              } finally {
+                inputStream.close()
               }
             }
+            else response.notFound
           }
       }
     }
