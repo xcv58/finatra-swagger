@@ -1,4 +1,9 @@
-package com.github.xiaodongw.swagger.finatra
+package com.jakehschwartz.finatra.swagger
+
+import java.lang.annotation.Annotation
+import java.lang.reflect.ParameterizedType
+import java.util
+import javax.inject.{Inject => JInject}
 
 import com.fasterxml.jackson.databind.{JavaType, ObjectMapper}
 import com.google.inject.{Inject => GInject}
@@ -8,15 +13,12 @@ import io.swagger.converter.{ModelConverter, ModelConverterContext, ModelConvert
 import io.swagger.jackson.ModelResolver
 import io.swagger.models._
 import io.swagger.models.parameters._
-import io.swagger.models.properties.{Property, RefProperty}
+import io.swagger.models.properties.Property
 import io.swagger.util.Json
-import java.lang.annotation.Annotation
-import java.lang.reflect.ParameterizedType
-import java.util
-import javax.inject.{Inject => JInject}
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.description.`type`.TypeDescription
 import net.bytebuddy.description.modifier.Visibility
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.reflect.runtime._

@@ -1,4 +1,4 @@
-package com.github.xiaodongw.swagger.finatra
+package com.jakehschwartz.finatra.swagger
 
 import io.swagger.models.parameters._
 import io.swagger.models.properties.{ArrayProperty, RefProperty}

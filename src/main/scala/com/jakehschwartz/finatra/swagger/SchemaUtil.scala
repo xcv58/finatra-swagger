@@ -1,7 +1,7 @@
-package com.github.xiaodongw.swagger.finatra
+package com.jakehschwartz.finatra.swagger
 
-import io.swagger.models.{ArrayModel, Model, RefModel}
 import io.swagger.models.properties.{ArrayProperty, Property, RefProperty}
+import io.swagger.models.{ArrayModel, Model, RefModel}
 
 object SchemaUtil {
   def toModel(schema: Property): Model = {

@@ -1,4 +1,4 @@
-package com.github.xiaodongw.swagger.finatra
+package com.jakehschwartz.finatra.swagger
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.twitter.finatra.http.HttpServer

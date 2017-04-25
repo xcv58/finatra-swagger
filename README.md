@@ -1,34 +1,14 @@
 # swagger-finatra
-Add Swagger support for Finatra (1.6 and 2.2.0) web framework.
+Add Swagger support to Finatra web framework.
 
-It requires Java 8 from version 0.6.0.
+Currently only supports Scala 2.12 with Finatra 2.9. For older versions, see the
+original repository by [xiaodongw](https://github.com/xiaodongw/swagger-finatra)
 
 # Getting started
-## Gradle
-#### Add repository
 
-	repositories {
-	  maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-	}
-
-#### Add Dependency
-
-##### Scala 2.10, Finatra 2.2.0
-
-	compile "com.github.xiaodongw:swagger-finatra_2.10:0.7.2"
-
-##### Scala 2.11, Finatra 2.2.0
-
-	compile "com.github.xiaodongw:swagger-finatra_2.11:0.7.2"
-
-## SBT
 	resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/releases/"
 
-#### Add Dependency
-
-##### Finatra 2.2.0
-
-    libraryDependencies += "com.github.xiaodongw" %% "swagger-finatra" % "0.7.2"
+    libraryDependencies += "com.jakehschwartz" %% "swagger-finatra" % "0.7.2"
 
 ## Add document information for you controller
     object SampleSwagger extends Swagger
@@ -66,6 +46,3 @@ It requires Java 8 from version 0.6.0.
 Swagger API document: ```http://localhost:8888/api-docs/model```
 
 Swagger UI: ```http://localhost:8888/api-docs/ui```
-
-# Finatra 1.6
-Previous version of Finatra (1.6) is also supported, Check [here](finatra1.md) for the guide.

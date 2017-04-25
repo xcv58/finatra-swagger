@@ -1,9 +1,10 @@
-package com.github.xiaodongw.swagger.finatra
+package com.jakehschwartz.finatra.swagger
+
+import javax.inject.Inject
 
 import com.twitter.finagle.http.Request
 import com.twitter.finatra.request.RouteParam
 import io.swagger.annotations.{ApiModel, ApiModelProperty}
-import javax.inject.Inject
 import org.joda.time.{DateTime, LocalDate}
 
 @ApiModel(value="AddressModel", description="Sample address model for documentation")
