@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
   "com.twitter" %% "finatra-http" % "2.9.0",
   "io.swagger" % "swagger-core" % "1.5.13",
   "io.swagger" %% "swagger-scala-module" % "1.0.3",
-  "org.webjars" % "swagger-ui" % "3.0.5",
+  "org.webjars" % "swagger-ui" % "3.0.7",
   "net.bytebuddy" % "byte-buddy" % "1.6.13",
   "org.scalatest" % "scalatest_2.12" % "3.0.2" % "test"
 )

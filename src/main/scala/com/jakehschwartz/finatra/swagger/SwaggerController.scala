@@ -2,7 +2,7 @@ package com.jakehschwartz.finatra.swagger
 
 import com.twitter.finatra.http.{Controller, SwaggerRouteDSL}
 
-trait SwaggerController extends SwaggerRouteDSL {
+trait SwaggerController extends Controller with SwaggerRouteDSL {
   self: Controller =>
   override protected val dsl = self
 

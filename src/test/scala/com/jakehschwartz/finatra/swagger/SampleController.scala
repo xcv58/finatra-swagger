@@ -1,11 +1,12 @@
 package com.jakehschwartz.finatra.swagger
 
 import java.util.Date
+import javax.inject.Inject
 
 import com.twitter.finagle.http.{Request, Response}
 import com.twitter.finagle.{Service, SimpleFilter}
-import com.twitter.finatra.http.Controller
 import com.twitter.util.Future
+import io.swagger.models.Swagger
 import org.joda.time.{DateTime, LocalDate}
 
 class SampleFilter extends SimpleFilter[Request, Response] {
@@ -14,8 +15,8 @@ class SampleFilter extends SimpleFilter[Request, Response] {
   }
 }
 
-class SampleController extends Controller with SwaggerController {
-  override implicit protected val swagger = SampleSwagger
+class SampleController @Inject()(s: Swagger) extends SwaggerController {
+  override implicit protected val swagger = s
 
   case class HelloResponse(text: String, time: Date)
 
@@ -27,7 +28,7 @@ class SampleController extends Controller with SwaggerController {
       .produces("application/json")
       .responseWith[Student](200, "the student object",
       example = Some(Student("Tom", "Wang", Gender.Male, new LocalDate(), 4, Some(Address("California Street", "94111")))))
-      .responseWith[Unit](404, "the student is not found")
+      .responseWith(404, "the student is not found")
   } { request: Request =>
     val id = request.getParam("id")
 
@@ -67,8 +68,8 @@ class SampleController extends Controller with SwaggerController {
     o.summary("Create a new student")
       .tag("Student")
       .bodyParam[Student]("student", "the student details")
-      .responseWith[Unit](200, "the student is created")
-      .responseWith[Unit](500, "internal error")
+      .responseWith[Student](200, "the student is created")
+      .responseWith(500, "internal error")
   } { student: Student =>
     //val student = request.contentString
     response.ok.json(student).toFuture
@@ -78,8 +79,8 @@ class SampleController extends Controller with SwaggerController {
     o.summary("Create a list of students")
       .tag("Student")
       .bodyParam[Array[Student]]("students", "the list of students")
-      .responseWith[Unit](200, "the students are created")
-      .responseWith[Unit](500, "internal error")
+      .responseWith[List[Student]](200, "the students are created")
+      .responseWith(500, "internal error")
   } { students: List[Student] =>
     response.ok.json(students).toFuture
   }
@@ -92,8 +93,8 @@ class SampleController extends Controller with SwaggerController {
       .routeParam[String]("id", "student ID")
       .cookieParam[String]("who", "who make the update")
       .headerParam[String]("token", "the token")
-      .responseWith[Unit](200, "the student is updated")
-      .responseWith[Unit](404, "the student is not found")
+      .responseWith(200, "the student is updated")
+      .responseWith(404, "the student is not found")
   } { request: Request =>
     val id = request.getParam("id")
     val name = request.getParam("name")
@@ -108,7 +109,6 @@ class SampleController extends Controller with SwaggerController {
     o.summary("Get a list of students")
       .tag("Student")
       .responseWith[Array[String]](200, "the student ids")
-      .responseWith[Unit](500, "internal error")
       .addSecurity("sampleBasic", List())
   } { request: Request =>
     response.ok.json(Array("student1", "student2")).toFuture
@@ -118,7 +118,7 @@ class SampleController extends Controller with SwaggerController {
     o.summary("Get a list of courses")
       .tag("Course")
       .responseWith[Array[String]](200, "the courses ids")
-      .responseWith[Unit](500, "internal error")
+      .responseWith(500, "internal error")
   } { request: Request =>
     response.ok.json(Array("course1", "course2")).toFuture
   }
@@ -128,7 +128,7 @@ class SampleController extends Controller with SwaggerController {
       .tag("Course")
       .routeParam[String]("id", "the course id")
       .responseWith[Course](200, "the courses detail")
-      .responseWith[Unit](500, "internal error")
+      .responseWith(500, "internal error")
   } { request: Request =>
     response.ok.json(Course(new DateTime(), "calculation", Seq("math"), CourseType.LAB, 20, BigDecimal(300.54))).toFuture
   }
@@ -139,7 +139,7 @@ class SampleController extends Controller with SwaggerController {
       .routeParam[String]("courseId", "the course id")
       .routeParam[String]("studentId", "the student id")
       .responseWith[Boolean](200, "true / false")
-      .responseWith[Unit](500, "internal error")
+      .responseWith(500, "internal error")
       .deprecated(true)
   } { request: Request =>
     response.ok.json(true).toFuture

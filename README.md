@@ -11,28 +11,48 @@ The major and minor version of the library matches the Finatra major and minor v
 
     libraryDependencies += "com.jakehschwartz" %% "finatra-swagger" % "2.9.0"
 
-First, add a Swagger object into the Server
+First, create a subclass of a SwaggerModule
 
-    object SampleSwagger extends Swagger
+    object SampleSwaggerModule extends SwaggerModule {
     
+      @Singleton
+      @Provides
+      def swagger: Swagger = {
+        val swagger = new Swagger()
+    
+        val info = new Info()
+          .description("The Student / Course management API, this is a sample for swagger document generation")
+          .version("1.0.1")
+          .title("Student / Course Management API")
+    
+        swagger
+          .info(info)
+          .addSecurityDefinition("sampleBasic", {
+            val d = new BasicAuthDefinition()
+            d.setType("basic")
+            d
+          })
+    
+        swagger
+      }
+    }
+
+Then add the module to the list of modules in the Server. Don't forget to include the DocsController in the router!
+
     object SampleApp extends HttpServer {
-      val info = new Info()
-        .description("The Student / Course management API, this is a sample for swagger document generation")
-        .version("1.0.1")
-        .title("Student / Course Management API")
-      SampleSwagger.info(info)
+      override protected def modules = Seq(SampleSwaggerModule)
 
       override def configureHttp(router: HttpRouter) {
         router
-          .add[WebjarsController]
-          .add(new SwaggerController(swagger = SampleSwagger))
+          .add[DocsController]
           ...
-      }
+      } 
+    }
 
-Then configure the endpoints using the `SwaggerRouteDSL`
+Lastly, configure the endpoints using the `SwaggerRouteDSL`
 
-    class SampleController extends Controller with SwaggerSupport {
-      implicit protected val swagger = SampleSwagger
+    class SampleController@Inject()(s: Swagger) extends SwaggerController {
+      implicit protected val swagger = s
 
       getWithDoc("/students/:id") { o =>
         o.summary("Read the detail information about the student")
@@ -44,5 +64,7 @@ Then configure the endpoints using the `SwaggerRouteDSL`
         ...
       }
 
-To see the Swagger UI, use the `/api-docs/ui` endpoint. To see the model that is JSON document that is generated, use
-`/api-docs/model`
+To see the Swagger UI, use the `/docs` endpoint. This can be overridden using the Finatra 
+[flag](https://twitter.github.io/finatra/user-guide/getting-started/flags.html) "swagger.docs.endpoint"
+
+To see the model that is JSON document that is generated, use `/swagger.json`. 

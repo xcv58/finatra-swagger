@@ -1,7 +1,6 @@
 package com.jakehschwartz.finatra.swagger
 
 import io.swagger.models.parameters._
-import io.swagger.models.properties.{ArrayProperty, RefProperty}
 import io.swagger.models._
 import io.swagger.util.Json
 import scala.collection.JavaConverters._
