@@ -1,11 +1,11 @@
 # finatra-swagger
-Add Swagger support to Finatra web framework.
+Add [Swagger UI](http://swagger.io/swagger-ui/) support to [Finatra](https://github.com/twitter/finatra) web framework.
 
 Currently only supports Scala 2.12 with Finatra 2.9. 
 
 For older versions, see the original repository by [xiaodongw](https://github.com/xiaodongw/swagger-finatra)
 
-# Getting started
+## Getting started
 
 The major and minor version of the library matches the Finatra major and minor version:
 
@@ -68,3 +68,8 @@ To see the Swagger UI, use the `/docs` endpoint. This can be overridden using th
 [flag](https://twitter.github.io/finatra/user-guide/getting-started/flags.html) "swagger.docs.endpoint"
 
 To see the model that is JSON document that is generated, use `/swagger.json`. 
+
+## Features
+TODO
+
+To see these in action, check out the [examples](/examples) directory
