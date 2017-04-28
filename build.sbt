@@ -17,6 +17,12 @@ libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.12" % "3.0.2" % "test"
 )
 
+scalacOptions ++= Seq(
+  "-feature",
+  "-language:existentials",
+  "-language:implicitConversions"
+)
+
 homepage := Some(url("https://jakehschwartz.github.io/finatra-swagger"))
 
 scmInfo := Some(ScmInfo(url("https://github.com/jakehschwartz/finatra-swagger"),

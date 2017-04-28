@@ -6,6 +6,8 @@ import io.swagger.util.Json
 import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe._
 
+import SchemaUtil._
+
 object FinatraOperation {
   implicit def convertToFinatraOperation(operation: Operation): FinatraOperation = new FinatraOperation(operation)
 }
@@ -86,9 +88,7 @@ class FinatraOperation(operation: Operation) {
 
   def bodyParam[T: TypeTag](name: String, description: String = "", example: Option[T] = None)
                            (implicit swagger: Swagger): Operation = {
-    val schema = swagger.registerModel[T]
-
-    val model = SchemaUtil.toModel(schema)
+    val model = swagger.registerModel[T].toModel
 
     //todo not working
     example.foreach { e =>

@@ -24,6 +24,8 @@ import scala.collection.mutable
 import scala.reflect.runtime._
 import scala.reflect.runtime.universe._
 
+import SchemaUtil._
+
 object FinatraSwagger {
   private val finatraRouteParamter = ":(\\w+)".r
 
@@ -230,10 +232,8 @@ class FinatraSwagger(swagger: Swagger) {
 
     val schema = registerModel(bodyClass, Some(name))
 
-    val model = SchemaUtil.toModel(schema)
-
     Some(
-      new BodyParameter().name("body").schema(model)
+      new BodyParameter().name("body").schema(schema.toModel)
     )
   }
 
