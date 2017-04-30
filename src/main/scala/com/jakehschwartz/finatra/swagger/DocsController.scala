@@ -31,7 +31,7 @@ class DocsController @Inject()(swagger: Swagger,
       .location(s"$endpoint/swagger-ui/3.0.7/index.html?url=/swagger.json")
   }
 
-  private val DEFAULT_EXPIRE_TIME_MS: Long = 86400000L // 1 day
+  private val defaultExpireTimeMillis: Long = 86400000L // 1 day
 
   get(s"$endpoint/:*") { request: Request =>
     val resourcePath = request.getParam("*")
@@ -56,9 +56,9 @@ class DocsController @Inject()(swagger: Swagger,
                 response
                   .ok(body)
                   .header("ETag", eTagName)
-                  .header("Expires", Message.httpDateFormat(new Date(System.currentTimeMillis() + DEFAULT_EXPIRE_TIME_MS)))
+                  .header("Expires", Message.httpDateFormat(new Date(System.currentTimeMillis() + defaultExpireTimeMillis)))
                   .header("Last-Modified",  Message.httpDateFormat(new Date(System.currentTimeMillis())))
-                  .header("Cache-Control", s"max-age=${DEFAULT_EXPIRE_TIME_MS / 1000}, must-revalidate")
+                  .header("Cache-Control", s"max-age=${defaultExpireTimeMillis / 1000}, must-revalidate")
                   .contentType(resolver.getContentType(filename))
               } finally {
                 inputStream.close()

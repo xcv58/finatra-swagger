@@ -28,15 +28,16 @@ homepage := Some(url("https://jakehschwartz.github.io/finatra-swagger"))
 scmInfo := Some(ScmInfo(url("https://github.com/jakehschwartz/finatra-swagger"),
   "git@github.com:jakehschwartz/finatra-swagger.git"))
 
-developers += Developer("jakehschwartz",
-  "Jake Schwartz",
-  "jakehschwartz@gmail.com",
-  url("https://github.com/jakehschwartz"))
-
-developers += Developer("xiaodongw",
-  "Xiaodong Wang",
-  "xiaodongw79@gmail.com",
-  url("https://github.com/xiaodongw"))
+developers ++= List(
+  Developer("jakehschwartz",
+    "Jake Schwartz",
+    "jakehschwartz@gmail.com",
+    url("https://github.com/jakehschwartz")),
+  Developer("xiaodongw",
+    "Xiaodong Wang",
+    "xiaodongw79@gmail.com",
+    url("https://github.com/xiaodongw"))
+)
 
 licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 

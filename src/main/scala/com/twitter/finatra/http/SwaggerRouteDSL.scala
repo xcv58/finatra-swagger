@@ -8,10 +8,10 @@ import io.swagger.models.{Operation, Swagger}
   * To work around the accessibility of RouteDSL, this class is in "com.twitter.finatra.http" package
   */
 object SwaggerRouteDSL {
-  implicit def convertToSwaggerRouteDSL(dsl: RouteDSL)(implicit swagger: Swagger): SwaggerRouteDSL = new SwaggerRouteDSLWrapper(dsl)(swagger)
+  implicit def convert(dsl: RouteDSL)(implicit swagger: Swagger): SwaggerRouteDSL = new SwaggerRouteDSLWrapper(dsl)(swagger)
 }
 
-trait SwaggerRouteDSL extends RouteDSL{
+trait SwaggerRouteDSL extends RouteDSL {
   implicit protected val swagger: Swagger
 
   def postWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,

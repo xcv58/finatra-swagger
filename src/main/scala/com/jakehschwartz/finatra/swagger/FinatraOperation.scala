@@ -7,13 +7,13 @@ import scala.collection.JavaConverters._
 import scala.reflect.runtime.universe._
 
 import SchemaUtil._
+import FinatraSwagger._
 
 object FinatraOperation {
-  implicit def convertToFinatraOperation(operation: Operation): FinatraOperation = new FinatraOperation(operation)
+  implicit def convert(operation: Operation): FinatraOperation = new FinatraOperation(operation)
 }
 
 class FinatraOperation(operation: Operation) {
-  import FinatraSwagger._
 
   def routeParam[T: TypeTag](name: String, description: String = "", required: Boolean = true)
                             (implicit swagger: Swagger): Operation = {

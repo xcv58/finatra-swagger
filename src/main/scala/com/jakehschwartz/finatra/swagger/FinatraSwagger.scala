@@ -34,7 +34,7 @@ object FinatraSwagger {
    */
   private val dynamicClassBodies: mutable.HashMap[String, Class[_]] = new mutable.HashMap[String, Class[_]]()
 
-  implicit def convertToFinatraSwagger(swagger: Swagger): FinatraSwagger = new FinatraSwagger(swagger)
+  implicit def convert(swagger: Swagger): FinatraSwagger = new FinatraSwagger(swagger)
 }
 
 sealed trait ModelParam {
@@ -61,13 +61,12 @@ object Resolvers {
       next: util.Iterator[ModelConverter]): Property = {
       if (propType.getRawClass == classOf[Option[_]]) {
         try {
-          return super.resolveProperty(propType.containedType(0), context, annotations, next)
+          super.resolveProperty(propType.containedType(0), context, annotations, next)
         } catch {
           case _: Exception =>
+            super.resolveProperty(propType, context, annotations, next)
         }
-      }
-
-      super.resolveProperty(propType, context, annotations, next)
+      } else super.resolveProperty(propType, context, annotations, next)
     }
   }
 
