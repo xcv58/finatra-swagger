@@ -6,7 +6,7 @@
 
 Add [Swagger UI](http://swagger.io/swagger-ui/) support to [Finatra](https://github.com/twitter/finatra) web framework.
 
-Currently only supports Scala 2.12 with Finatra 2.9. 
+Currently supports Scala 2.12 with Finatra 2.10 or 2.9. 
 
 For older versions, see the original repository by [xiaodongw](https://github.com/xiaodongw/swagger-finatra)
 
