@@ -1,5 +1,6 @@
 package com.jakehschwartz.finatra.swagger
 
+import java.io.BufferedInputStream
 import java.util.Date
 import javax.inject.{Inject, Singleton}
 
@@ -51,10 +52,11 @@ class DocsController @Inject()(swagger: Swagger,
             if (inputStream != null) {
               try {
                 val filename = getFileName(webjarsResourceURI)
-                val body = Source.fromInputStream(inputStream).mkString
+                val body = new BufferedInputStream(inputStream)
 
                 response
-                  .ok(body)
+                  .ok
+                  .body(body)
                   .header("ETag", eTagName)
                   .header("Expires", Message.httpDateFormat(new Date(System.currentTimeMillis() + defaultExpireTimeMillis)))
                   .header("Last-Modified",  Message.httpDateFormat(new Date(System.currentTimeMillis())))
