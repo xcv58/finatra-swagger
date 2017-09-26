@@ -87,7 +87,17 @@ trait SwaggerRouteDSL extends RouteDSL {
   private def registerOperation(path: String, method: String)(doc: Operation => Operation): Unit = {
     FinatraSwagger
       .convert(swagger)
-      .registerOperation(path, method, doc(new Operation))
+      .registerOperation(prefixRoute(path), method, doc(new Operation))
+  }
+
+
+  //exact copy from Finatra RouteDSL class (it is defined as private there)
+  private def prefixRoute(route: String): String = {
+    contextVar().prefix match {
+      case prefix if prefix.nonEmpty && prefix.startsWith("/") => s"$prefix$route"
+      case prefix if prefix.nonEmpty && !prefix.startsWith("/") => s"/$prefix$route"
+      case _ => route
+    }
   }
 }
 
