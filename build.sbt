@@ -2,12 +2,12 @@ name := "finatra-swagger"
 
 organization := "com.jakehschwartz"
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.4"
 
 sbtVersion := "0.13.16"
 
 libraryDependencies ++= Seq(
-  "com.twitter" %% "finatra-http" % "2.13.0",
+  "com.twitter" %% "finatra-http" % "17.11.0",
   "io.swagger" % "swagger-core" % "1.5.16",
   "io.swagger" %% "swagger-scala-module" % "1.0.4",
   "org.webjars" % "swagger-ui" % "3.2.0",
