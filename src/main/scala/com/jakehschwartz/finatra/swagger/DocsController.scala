@@ -2,22 +2,21 @@ package com.jakehschwartz.finatra.swagger
 
 import java.io.BufferedInputStream
 import java.util.Date
+import javax.activation.MimetypesFileTypeMap
 import javax.inject.{Inject, Singleton}
 
 import com.twitter.finagle.http.{Message, Request}
 import com.twitter.finatra.http.Controller
-import com.twitter.finatra.http.routing.FileResolver
 import com.twitter.inject.annotations.Flag
 import io.swagger.models.Swagger
 import io.swagger.util.Json
+import org.apache.commons.io.FilenameUtils
 import org.joda.time.format.DateTimeFormat
 
-import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 @Singleton
 class DocsController @Inject()(swagger: Swagger,
-                               resolver: FileResolver,
                                @Flag("swagger.docs.endpoint") endpoint: String) extends Controller {
 
   get("/swagger.json") { _: Request =>
@@ -33,6 +32,7 @@ class DocsController @Inject()(swagger: Swagger,
   }
 
   private val defaultExpireTimeMillis: Long = 86400000L // 1 day
+  private val extMap = new MimetypesFileTypeMap()
 
   get(s"$endpoint/:*") { request: Request =>
     val resourcePath = request.getParam("*")
@@ -61,7 +61,7 @@ class DocsController @Inject()(swagger: Swagger,
                   .header("Expires", Message.httpDateFormat(new Date(System.currentTimeMillis() + defaultExpireTimeMillis)))
                   .header("Last-Modified",  Message.httpDateFormat(new Date(System.currentTimeMillis())))
                   .header("Cache-Control", s"max-age=${defaultExpireTimeMillis / 1000}, must-revalidate")
-                  .contentType(resolver.getContentType(filename))
+                  .contentType(getContentType(filename))
               } finally {
                 inputStream.close()
               }
@@ -105,5 +105,13 @@ class DocsController @Inject()(swagger: Swagger,
       case None => false
       case Some(last) => last - System.currentTimeMillis > 0L
     }
+  }
+
+  private def getContentType(file: String) = {
+    extMap.getContentType(dottedFileExtension(file))
+  }
+
+  private def dottedFileExtension(uri: String) = {
+    '.' + FilenameUtils.getExtension(uri)
   }
 }
