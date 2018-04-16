@@ -7,12 +7,12 @@ scalaVersion := "2.12.4"
 sbtVersion := "0.13.16"
 
 libraryDependencies ++= Seq(
-  "com.twitter" %% "finatra-http" % "17.11.0",
+  "com.twitter" %% "finatra-http" % "18.3.0",
   "io.swagger" % "swagger-core" % "1.5.16",
   "io.swagger" %% "swagger-scala-module" % "1.0.4",
-  "org.webjars" % "swagger-ui" % "3.2.0",
-  "net.bytebuddy" % "byte-buddy" % "1.7.5",
-  "org.scalatest" %% "scalatest" % "3.0.4" % "test"
+  "org.webjars" % "swagger-ui" % "3.12.1",
+  "net.bytebuddy" % "byte-buddy" % "1.8.0",
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
 scalacOptions ++= Seq(
