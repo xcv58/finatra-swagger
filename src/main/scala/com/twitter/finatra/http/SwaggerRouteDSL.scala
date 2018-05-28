@@ -93,12 +93,20 @@ trait SwaggerRouteDSL extends RouteDSL {
 
   //exact copy from Finatra RouteDSL class (it is defined as private there)
   private def prefixRoute(route: String): String = {
-    contextVar().prefix match {
-      case prefix if prefix.nonEmpty && prefix.startsWith("/") => s"$prefix$route"
-      case prefix if prefix.nonEmpty && !prefix.startsWith("/") => s"/$prefix$route"
-      case _ => route
+    contextWrapper {
+      contextVar().prefix match {
+        case prefix if prefix.nonEmpty && prefix.startsWith("/") => s"$prefix$route"
+        case prefix if prefix.nonEmpty && !prefix.startsWith("/") => s"/$prefix$route"
+        case _ => route
+      }
     }
   }
 }
 
-private class SwaggerRouteDSLWrapper(protected val dsl: RouteDSL)(implicit protected val swagger: Swagger) extends SwaggerRouteDSL
+private class SwaggerRouteDSLWrapper(protected val dsl: RouteDSL)(implicit protected val swagger: Swagger) extends SwaggerRouteDSL {
+  override private[http] val routeBuilders                 = dsl.routeBuilders
+  override private[http] val annotations                   = dsl.annotations
+  override private[http] lazy val contextVar               = dsl.contextVar
+  override private[http] val context                       = dsl.context
+  override private[http] def contextWrapper[T](f: => T): T = withContext(context)(f)
+}
