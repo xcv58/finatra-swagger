@@ -4,8 +4,6 @@ organization := "com.jakehschwartz"
 
 scalaVersion := "2.12.6"
 
-sbtVersion := "0.13.16"
-
 libraryDependencies ++= Seq(
   "com.twitter" %% "finatra-http" % "18.6.0",
   "io.swagger" % "swagger-core" % "1.5.19",
