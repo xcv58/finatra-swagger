@@ -2,16 +2,16 @@ package com.jakehschwartz.finatra.swagger
 
 import java.io.BufferedInputStream
 import java.util.Date
+
 import javax.activation.MimetypesFileTypeMap
 import javax.inject.{Inject, Singleton}
-
 import com.twitter.finagle.http.{Message, Request}
 import com.twitter.finatra.http.Controller
 import com.twitter.inject.annotations.Flag
 import io.swagger.models.Swagger
 import io.swagger.util.Json
 import org.apache.commons.io.FilenameUtils
-import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 
 import scala.util.{Failure, Success, Try}
 
@@ -28,7 +28,7 @@ class DocsController @Inject()(swagger: Swagger,
   get(s"$endpoint") { _: Request =>
     response
       .temporaryRedirect
-      .location(s"$endpoint/swagger-ui/3.13.3/index.html?url=/swagger.json")
+      .location(s"$endpoint/swagger-ui/${BuildInfo.swaggerUIVersion}/index.html?url=/swagger.json")
   }
 
   private val defaultExpireTimeMillis: Long = 86400000L // 1 day
@@ -99,7 +99,7 @@ class DocsController @Inject()(swagger: Swagger,
     }
   }
 
-  val dateParser = DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
+  val dateParser: DateTimeFormatter = DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
   private def checkLastModify(request: Request): Boolean = {
     request.headerMap.get("If-Modified-Since").map(dateParser.parseDateTime).map(_.getMillis) match {
       case None => false
