@@ -70,6 +70,6 @@ workflows:
         requires:
         - test
         filters:
-          branches:
+          tags:
             only:
-            - /master/
+            - /*/
