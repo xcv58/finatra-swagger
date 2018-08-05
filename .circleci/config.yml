@@ -1,0 +1,75 @@
+version: 2
+jobs:
+
+  test:
+    docker:
+    - image: circleci/openjdk:8u171-jdk-stretch-node-browsers
+    steps:
+    - checkout
+    - run:
+        name: Save Build Number
+        command: echo $CIRCLE_BUILD_NUM > .publish_version
+    - save_cache:
+        key: finatra-swagger-version-cache-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+        paths:
+        - .publish_version
+    - restore_cache:
+        key: scala-sbt-cache-{{ checksum "project/build.properties" }}
+    - restore_cache:
+        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}
+    - run:
+        name: Test
+        command: |
+          export CIRCLE_BUILD_NUM=$(cat .publish_version)
+          sbt test:compile test
+    - store_test_results:
+        path: target/test-reports/
+    - save_cache:
+        key: scala-sbt-cache-{{ checksum "project/build.properties" }}
+        paths:
+        - "~/.sbt"
+    - save_cache:
+        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}
+        paths:
+        - "~/.ivy2/cache"
+        - "~/.m2"
+    - save_cache:
+        key: finatra-swagger-target-cache-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+        paths:
+        - "target/"
+        - "project/target/"
+
+  publish:
+    docker:
+    - image: circleci/openjdk:8u171-jdk-stretch-node-browsers
+    steps:
+    - checkout
+    - setup_remote_docker:
+        docker_layer_caching: true
+    - restore_cache:
+        key: scala-sbt-cache-{{ checksum "project/build.properties" }}
+    - restore_cache:
+        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}
+    - restore_cache:
+        key: finatra-swagger-target-cache-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+    - run:
+        name: Publish Signed
+        command: |
+          sbt publishSigned
+    - run:
+        name: Sonatype Release
+        command: |
+          sbt sonatypeRelease
+
+workflows:
+  version: 2
+  main_workflow:
+    jobs:
+    - test
+    - publish:
+        requires:
+        - test
+        filters:
+          branches:
+            only:
+            - /master/
