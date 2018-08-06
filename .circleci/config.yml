@@ -65,11 +65,11 @@ workflows:
   version: 2
   main_workflow:
     jobs:
-    - test
-      filters:
-        branches:
-          only:
-          - /*/
+    - test:
+        filters:
+          branches:
+            only:
+            - /*/
     - publish:
         requires:
         - test
