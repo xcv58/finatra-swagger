@@ -66,6 +66,10 @@ workflows:
   main_workflow:
     jobs:
     - test
+      filters:
+        branches:
+          only:
+          - /*/
     - publish:
         requires:
         - test
