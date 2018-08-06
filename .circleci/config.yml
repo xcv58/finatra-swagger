@@ -68,12 +68,14 @@ workflows:
     - test:
         filters:
           branches:
-            only:
-            - /.*/
+            only: /.*/
+          tags:
+            only: /.*/
     - publish:
         requires:
         - test
         filters:
           tags:
-            only:
-            - /.*/
+            only: /.*/
+          branches:
+            ignore: /.*/
