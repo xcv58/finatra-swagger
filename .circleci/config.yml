@@ -69,11 +69,11 @@ workflows:
         filters:
           branches:
             only:
-            - /*/
+            - /.*/
     - publish:
         requires:
         - test
         filters:
           tags:
             only:
-            - /*/
+            - /.*/
