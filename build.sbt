@@ -48,7 +48,8 @@ credentials += Credentials(
 )
 
 inScope(Global)(List(
-  PgpKeys.pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toCharArray())
+  PgpKeys.pgpPassphrase := sys.env.get("PGP_PASSPHRASE").map(_.toCharArray()),
+  PgpKeys.pgpSigningKey := sys.env.get("PGP_SECRET").map(_.toLong)
 ))
 
 // License of your choice
