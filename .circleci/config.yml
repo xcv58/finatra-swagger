@@ -16,7 +16,7 @@ jobs:
     - restore_cache:
         key: scala-sbt-cache-{{ checksum "project/build.properties" }}
     - restore_cache:
-        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}
+        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}-{{ checksum "project/plugins.sbt" }}
     - run:
         name: Test
         command: |
@@ -29,7 +29,7 @@ jobs:
         paths:
         - "~/.sbt"
     - save_cache:
-        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}
+        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}-{{ checksum "project/plugins.sbt" }}
         paths:
         - "~/.ivy2/cache"
         - "~/.m2"
@@ -49,9 +49,15 @@ jobs:
     - restore_cache:
         key: scala-sbt-cache-{{ checksum "project/build.properties" }}
     - restore_cache:
-        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}
+        key: finatra-swagger-dependency-cache-{{ checksum "build.sbt" }}-{{ checksum "project/plugins.sbt" }}
     - restore_cache:
         key: finatra-swagger-target-cache-{{ .Environment.CIRCLE_WORKFLOW_ID }}
+    - run:
+        name: Decrypt Secrets
+        command: |
+          mkdir /home/circleci/.sbt/gpg
+          openssl aes-256-cbc -md sha256 -d -in secret-pubring.asc -k $ENCRYPTION_KEY > /home/circleci/.sbt/gpg/pubring.asc
+          openssl aes-256-cbc -md sha256 -d -in secret-secring.asc -k $ENCRYPTION_KEY > /home/circleci/.sbt/gpg/secring.asc
     - run:
         name: Publish Signed
         command: |
@@ -72,4 +78,4 @@ workflows:
         filters:
           branches:
             only:
-            - /master____/
+            - /master/
