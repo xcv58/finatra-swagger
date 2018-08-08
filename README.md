@@ -1,6 +1,5 @@
 # finatra-swagger
 
--[![Join the chat at https://gitter.im/finatra-swagger/Lobby](https://badges.gitter.im/jakehschwartzfinatra-swagger.svg)](https://gitter.im/jakehschwartz/finatra-swagger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![CircleCI](https://circleci.com/gh/jakehschwartz/finatra-swagger/tree/master.svg?style=svg)](https://circleci.com/gh/jakehschwartz/finatra-swagger/tree/master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/02f5a150c842471cb8415b6510ed0ab6)](https://www.codacy.com/app/jakehschwartz54/finatra-swagger?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jakehschwartz/finatra-swagger&amp;utm_campaign=Badge_Grade)
 
