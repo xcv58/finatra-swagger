@@ -6,18 +6,18 @@ scalaVersion := "2.12.7"
 
 lazy val swaggerUIVersion = SettingKey[String]("swaggerUIVersion")
 
-swaggerUIVersion := "3.19.0"
+swaggerUIVersion := "3.19.4"
 
 enablePlugins(BuildInfoPlugin)
 buildInfoPackage := "com.jakehschwartz.finatra.swagger"
 buildInfoKeys := Seq[BuildInfoKey](name, version, swaggerUIVersion)
 
 libraryDependencies ++= Seq(
-  "com.twitter" %% "finatra-http" % "18.9.1",
+  "com.twitter" %% "finatra-http" % "18.10.0",
   "io.swagger" % "swagger-core" % "1.5.21",
   "io.swagger" %% "swagger-scala-module" % "1.0.4",
   "org.webjars" % "swagger-ui" % swaggerUIVersion.value,
-  "net.bytebuddy" % "byte-buddy" % "1.9.0",
+  "net.bytebuddy" % "byte-buddy" % "1.9.2",
   "org.scalatest" %% "scalatest" % "3.0.5" % Test
 )
 
