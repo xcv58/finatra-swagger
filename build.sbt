@@ -62,3 +62,8 @@ developers := List(
   Developer(id="jakehschwartz", name="Jake Schwartz", email="jakehschwartz@gmail.com", url=url("https://www.jakehschwartz.com")),
   Developer(id="xiaodongw", name="Xiaodong Wang", email="xiaodongw79@gmail.com", url=url("https://github.com/xiaodongw"))
 )
+
+lazy val root = Project("finatra-swagger", file("."))
+
+lazy val example = Project("hello-world-example", file("examples/hello-world"))
+  .dependsOn(root)
