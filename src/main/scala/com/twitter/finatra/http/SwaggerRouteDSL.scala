@@ -14,7 +14,7 @@ object SwaggerRouteDSL {
 trait SwaggerRouteDSL extends RouteDSL {
   implicit protected val swagger: Swagger
 
-  val NoopCallback: Request => Response = _ => response.SimpleResponse(Status.Ok, "")
+  val noopCallback: Request => Response = _ => response.SimpleResponse(Status.Ok, "")
 
   def postWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
                                                                  name: String = "",
@@ -26,7 +26,7 @@ trait SwaggerRouteDSL extends RouteDSL {
     registerOperation(route, "post")(doc)
     post(route, name, admin, routeIndex)(callback)
     if (registerOptionsRequest) {
-      options(route, name, admin, routeIndex)(NoopCallback)
+      options(route, name, admin, routeIndex)(noopCallback)
     }
   }
 
@@ -40,7 +40,7 @@ trait SwaggerRouteDSL extends RouteDSL {
     registerOperation(route, "get")(doc)
     get(route, name, admin, routeIndex)(callback)
     if (registerOptionsRequest) {
-      options(route, name, admin, routeIndex)(NoopCallback)
+      options(route, name, admin, routeIndex)(noopCallback)
     }
   }
 
@@ -54,7 +54,7 @@ trait SwaggerRouteDSL extends RouteDSL {
     registerOperation(route, "put")(doc)
     put(route, name, admin, routeIndex)(callback)
     if (registerOptionsRequest) {
-      options(route, name, admin, routeIndex)(NoopCallback)
+      options(route, name, admin, routeIndex)(noopCallback)
     }
   }
 
@@ -68,7 +68,7 @@ trait SwaggerRouteDSL extends RouteDSL {
     registerOperation(route, "patch")(doc)
     patch(route, name, admin, routeIndex)(callback)
     if (registerOptionsRequest) {
-      options(route, name, admin, routeIndex)(NoopCallback)
+      options(route, name, admin, routeIndex)(noopCallback)
     }
   }
 
@@ -82,7 +82,7 @@ trait SwaggerRouteDSL extends RouteDSL {
     registerOperation(route, "head")(doc)
     head(route, name, admin, routeIndex)(callback)
     if (registerOptionsRequest) {
-      options(route, name, admin, routeIndex)(NoopCallback)
+      options(route, name, admin, routeIndex)(noopCallback)
     }
   }
 
@@ -96,7 +96,7 @@ trait SwaggerRouteDSL extends RouteDSL {
     registerOperation(route, "delete")(doc)
     delete(route, name, admin, routeIndex)(callback)
     if (registerOptionsRequest) {
-      options(route, name, admin, routeIndex)(NoopCallback)
+      options(route, name, admin, routeIndex)(noopCallback)
     }
   }
 
