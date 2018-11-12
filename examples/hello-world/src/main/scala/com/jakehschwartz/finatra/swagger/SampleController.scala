@@ -15,12 +15,11 @@ class SampleFilter extends SimpleFilter[Request, Response] {
   }
 }
 
-class SampleController @Inject()(s: Swagger) extends SwaggerController {
-  override implicit protected val swagger = s
+class SampleController @Inject()(implicit val swagger: Swagger) extends SwaggerController {
 
   case class HelloResponse(text: String, time: Date)
 
-  getWithDoc("/students/:id") { o =>
+  getWithDoc("/students/:id", registerOptionsRequest = true) { o =>
     o.summary("Read student information")
       .description("Read the detail information about the student.")
       .tag("Student")
@@ -46,7 +45,7 @@ class SampleController @Inject()(s: Swagger) extends SwaggerController {
     response.ok.json(Student("Alice", "Wang", Gender.Female, new LocalDate(), 4, Some(Address("California Street", "94111")))).toFuture
   }
 
-  postWithDoc("/students/test/:id") { o =>
+  postWithDoc("/students/test/:id", registerOptionsRequest = true) { o =>
     o.summary("Sample request with route2")
       .description("Read the detail information about the student.")
       .tag("Student")
@@ -57,7 +56,7 @@ class SampleController @Inject()(s: Swagger) extends SwaggerController {
     response.ok.json(Student("Alice", "Wang", Gender.Female, new LocalDate(), 4, Some(Address("California Street", "94111")))).toFuture
   }
 
-  postWithDoc("/students/firstName") {
+  postWithDoc("/students/firstName", registerOptionsRequest = true) {
     _.request[StringWithRequest]
       .tag("Student")
   } { request: StringWithRequest =>
@@ -75,7 +74,7 @@ class SampleController @Inject()(s: Swagger) extends SwaggerController {
     response.ok.json(student).toFuture
   }
 
-  postWithDoc("/students/bulk") { o =>
+  postWithDoc("/students/bulk", registerOptionsRequest = true) { o =>
     o.summary("Create a list of students")
       .tag("Student")
       .bodyParam[Array[Student]]("students", "the list of students")
@@ -105,7 +104,7 @@ class SampleController @Inject()(s: Swagger) extends SwaggerController {
     response.ok.toFuture
   }
 
-  getWithDoc("/students") { o =>
+  getWithDoc("/students", registerOptionsRequest = true) { o =>
     o.summary("Get a list of students")
       .tag("Student")
       .responseWith[Array[String]](200, "the student ids")
@@ -114,7 +113,7 @@ class SampleController @Inject()(s: Swagger) extends SwaggerController {
     response.ok.json(Array("student1", "student2")).toFuture
   }
 
-  getWithDoc("/courses") { o =>
+  getWithDoc("/courses", registerOptionsRequest = true) { o =>
     o.summary("Get a list of courses")
       .tag("Course")
       .responseWith[Array[String]](200, "the courses ids")
@@ -123,7 +122,7 @@ class SampleController @Inject()(s: Swagger) extends SwaggerController {
     response.ok.json(Array("course1", "course2")).toFuture
   }
 
-  getWithDoc("/courses/:id") { o =>
+  getWithDoc("/courses/:id", registerOptionsRequest = true) { o =>
     o.summary("Get the detail of a course")
       .tag("Course")
       .routeParam[String]("id", "the course id")
@@ -133,7 +132,7 @@ class SampleController @Inject()(s: Swagger) extends SwaggerController {
     response.ok.json(Course(new DateTime(), "calculation", Seq("math"), CourseType.LAB, 20, BigDecimal(300.54))).toFuture
   }
 
-  filter[SampleFilter].getWithDoc("/courses/:courseId/student/:studentId") { o =>
+  filter[SampleFilter].getWithDoc("/courses/:courseId/student/:studentId", registerOptionsRequest = true) { o =>
     o.summary("Is the student in this course")
       .tags(List("Course", "Student"))
       .routeParam[String]("courseId", "the course id")

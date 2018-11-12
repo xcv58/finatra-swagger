@@ -1,7 +1,7 @@
 package com.twitter.finatra.http
 
 import com.jakehschwartz.finatra.swagger.FinatraSwagger
-import com.twitter.finagle.http.RouteIndex
+import com.twitter.finagle.http.{Request, Response, RouteIndex, Status}
 import io.swagger.models.{Operation, Swagger}
 
 /**
@@ -14,64 +14,90 @@ object SwaggerRouteDSL {
 trait SwaggerRouteDSL extends RouteDSL {
   implicit protected val swagger: Swagger
 
+  val noopCallback: Request => Response = _ => response.SimpleResponse(Status.Ok, "")
+
   def postWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
                                                                  name: String = "",
                                                                  admin: Boolean = false,
-                                                                 routeIndex: Option[RouteIndex] = None)
+                                                                 routeIndex: Option[RouteIndex] = None,
+                                                                 registerOptionsRequest: Boolean = false)
                                                                 (doc: Operation => Operation)
                                                                 (callback: RequestType => ResponseType): Unit = {
     registerOperation(route, "post")(doc)
     post(route, name, admin, routeIndex)(callback)
+    if (registerOptionsRequest) {
+      options(route, name, admin, routeIndex)(noopCallback)
+    }
   }
 
   def getWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
                                                                 name: String = "",
                                                                 admin: Boolean = false,
-                                                                routeIndex: Option[RouteIndex] = None)
+                                                                routeIndex: Option[RouteIndex] = None,
+                                                                registerOptionsRequest: Boolean = false)
                                                                (doc: Operation => Operation)
                                                                (callback: RequestType => ResponseType): Unit = {
     registerOperation(route, "get")(doc)
     get(route, name, admin, routeIndex)(callback)
+    if (registerOptionsRequest) {
+      options(route, name, admin, routeIndex)(noopCallback)
+    }
   }
 
   def putWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
                                                                 name: String = "",
                                                                 admin: Boolean = false,
-                                                                routeIndex: Option[RouteIndex] = None)
+                                                                routeIndex: Option[RouteIndex] = None,
+                                                                registerOptionsRequest: Boolean = false)
                                                                (doc: Operation => Operation)
                                                                (callback: RequestType => ResponseType): Unit = {
     registerOperation(route, "put")(doc)
     put(route, name, admin, routeIndex)(callback)
+    if (registerOptionsRequest) {
+      options(route, name, admin, routeIndex)(noopCallback)
+    }
   }
 
   def patchWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
                                                                   name: String = "",
                                                                   admin: Boolean = false,
-                                                                  routeIndex: Option[RouteIndex] = None)
+                                                                  routeIndex: Option[RouteIndex] = None,
+                                                                  registerOptionsRequest: Boolean = false)
                                                                  (doc: Operation => Operation)
                                                                  (callback: RequestType => ResponseType): Unit = {
     registerOperation(route, "patch")(doc)
     patch(route, name, admin, routeIndex)(callback)
+    if (registerOptionsRequest) {
+      options(route, name, admin, routeIndex)(noopCallback)
+    }
   }
 
   def headWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
                                                                  name: String = "",
                                                                  admin: Boolean = false,
-                                                                 routeIndex: Option[RouteIndex] = None)
+                                                                 routeIndex: Option[RouteIndex] = None,
+                                                                 registerOptionsRequest: Boolean = false)
                                                                 (doc: Operation => Operation)
                                                                 (callback: RequestType => ResponseType): Unit = {
     registerOperation(route, "head")(doc)
     head(route, name, admin, routeIndex)(callback)
+    if (registerOptionsRequest) {
+      options(route, name, admin, routeIndex)(noopCallback)
+    }
   }
 
   def deleteWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
                                                                    name: String = "",
                                                                    admin: Boolean = false,
-                                                                   routeIndex: Option[RouteIndex] = None)
+                                                                   routeIndex: Option[RouteIndex] = None,
+                                                                   registerOptionsRequest: Boolean = false)
                                                                   (doc: Operation => Operation)
                                                                   (callback: RequestType => ResponseType): Unit = {
     registerOperation(route, "delete")(doc)
     delete(route, name, admin, routeIndex)(callback)
+    if (registerOptionsRequest) {
+      options(route, name, admin, routeIndex)(noopCallback)
+    }
   }
 
   def optionsWithDoc[RequestType: Manifest, ResponseType: Manifest](route: String,
