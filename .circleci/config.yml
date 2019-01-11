@@ -59,10 +59,6 @@ jobs:
           openssl aes-256-cbc -md sha256 -d -in secret-pubring.asc -k $ENCRYPTION_KEY > /home/circleci/.sbt/gpg/pubring.asc
           openssl aes-256-cbc -md sha256 -d -in secret-secring.asc -k $ENCRYPTION_KEY > /home/circleci/.sbt/gpg/secring.asc
     - run:
-        name: Publish Signed
-        command: |
-          sbt publishSigned
-    - run:
         name: Sonatype Release
         command: |
           sbt sonatypeRelease
