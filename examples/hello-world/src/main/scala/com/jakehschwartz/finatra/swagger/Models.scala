@@ -15,8 +15,8 @@ case class Student(firstName: String, lastName: String, gender: Gender, birthday
 case class StudentWithRoute(
   @RouteParam id: String,
   @Inject request: Request,
-  firstName: String,
-  lastName: String,
+  @ApiModelProperty(name = "first_name")firstName: String,
+  @ApiModelProperty(name = "last_name")lastName: String,
   gender: Gender,
   birthday: LocalDate,
   grade: Int,
