@@ -5,8 +5,13 @@ import java.lang.reflect.ParameterizedType
 import java.util
 import javax.inject.{Inject => JInject}
 
+import scala.collection.JavaConverters._
+import scala.reflect.runtime._
+import scala.reflect.runtime.universe._
+
 import com.fasterxml.jackson.databind.{JavaType, ObjectMapper}
 import com.google.inject.{Inject => GInject}
+import com.jakehschwartz.finatra.swagger.SchemaUtil._
 import com.twitter.finagle.http.Request
 import com.twitter.finatra.request.{FormParam, QueryParam, RouteParam, Header => HeaderParam}
 import io.swagger.converter.{ModelConverter, ModelConverterContext, ModelConverters}
@@ -19,20 +24,12 @@ import net.bytebuddy.ByteBuddy
 import net.bytebuddy.description.`type`.TypeDescription
 import net.bytebuddy.description.modifier.Visibility
 
-import scala.collection.JavaConverters._
-import scala.collection.mutable
-import scala.reflect.runtime._
-import scala.reflect.runtime.universe._
-
-import SchemaUtil._
 
 object FinatraSwagger {
-  private val finatraRouteParamter = ":(\\w+)".r
+  private val finatraRouteParameter = ":(\\w+)".r
 
-  /**
-   * Cache of dynamically generated class bodies keyed by qualified names
-   */
-  private val dynamicClassBodies: mutable.HashMap[String, Class[_]] = new mutable.HashMap[String, Class[_]]()
+  private val finatraAnnotations: Set[Class[_ <: Annotation]] =
+    Set(classOf[RouteParam], classOf[QueryParam], classOf[JInject], classOf[GInject], classOf[HeaderParam], classOf[FormParam])
 
   implicit def convert(swagger: Swagger): FinatraSwagger = new FinatraSwagger(swagger)
 }
@@ -77,8 +74,6 @@ object Resolvers {
 
 class FinatraSwagger(swagger: Swagger) {
 
-  import FinatraSwagger._
-
   /**
    * Register a request object that contains body information/route information/etc
    *
@@ -88,31 +83,29 @@ class FinatraSwagger(swagger: Swagger) {
   def register[T: TypeTag]: List[Parameter] = {
     val properties = getFinatraProps[T]
 
-    val className = currentMirror.runtimeClass(typeOf[T]).getName
-
-    val swaggerProps =
+    val swaggerFinatraProps =
       properties.collect {
         case x: ModelParam => x
       }.map {
-        case param @ (x: RouteRequestParam) =>
+        case param @ (_: RouteRequestParam) =>
           new PathParameter().
             name(param.name).
             description(param.description).
             required(param.required).
             property(registerModel(param.typ))
-        case param @ (x: QueryRequestParam) =>
+        case param @ (_: QueryRequestParam) =>
           new QueryParameter().
             name(param.name).
             description(param.description).
             required(param.required).
             property(registerModel(param.typ))
-        case param @ (x: HeaderRequestParam) =>
+        case param @ (_: HeaderRequestParam) =>
           new HeaderParameter().
             name(param.name).
             description(param.description).
             required(param.required).
             property(registerModel(param.typ))
-        case param @ (x: FormRequestParam) =>
+        case param @ (_: FormRequestParam) =>
           new FormParameter().
             name(param.name).
             description(param.description).
@@ -120,9 +113,50 @@ class FinatraSwagger(swagger: Swagger) {
             property(registerModel(param.typ))
       }
 
-    val bodyElements = properties.collect { case b: BodyRequestParam => b }
+    swaggerFinatraProps ++ List(getSwaggerBodyProp[T])
+  }
 
-    swaggerProps ++ List(registerDynamicBody(bodyElements, className)).flatten
+  private def getSwaggerBodyProp[T: TypeTag]: Parameter = {
+    val clazz = currentMirror.runtimeClass(typeOf[T])
+
+    val fields = TypeDescription.ForLoadedType
+      .of(clazz)
+      .getDeclaredFields
+      .asScala
+      .toList
+    val annotations = clazz
+      .getConstructors
+      .head
+      .getParameters
+      .map(parameter => parameter.getAnnotations)
+      .toList
+
+    val bodyFieldsWithAnnotations = fields.zip(annotations)
+      .filter { fieldWithAnnotations =>
+        val (_, annotations) = fieldWithAnnotations
+        val containsFinatraAnnotations = FinatraSwagger.finatraAnnotations
+          .intersect(annotations.map(_.annotationType()).toSet)
+          .isEmpty
+
+        containsFinatraAnnotations
+      }
+
+    val dynamicType = new ByteBuddy()
+      .subclass(classOf[Object])
+      .name("swagger." + clazz.getCanonicalName)
+
+    val populatedType = bodyFieldsWithAnnotations.foldLeft(dynamicType) { (asm, fieldWithAnnotations) =>
+      val (field, annotations) = fieldWithAnnotations
+      asm
+        .defineField(field.getName, field.getType, Visibility.PUBLIC)
+        .annotateField(annotations.toList.asJava)
+    }
+
+    val bodyProperty = registerModel(populatedType.make.load(getClass.getClassLoader).getLoaded).toModel
+
+    new BodyParameter()
+      .name("body")
+      .schema(bodyProperty)
   }
 
   /**
@@ -193,49 +227,6 @@ class FinatraSwagger(swagger: Swagger) {
     ast.flatten
   }
 
-  private def emitBodyClassForElements(bodyElements: List[BodyRequestParam], className: String): Class[_] = {
-    val byteBuddy = new ByteBuddy()
-
-    // add "Body" to avoid name collisions
-    val bodyEmittedClass = byteBuddy.subclass(classOf[Object]).name(className)
-
-    val bodyFields = bodyElements.foldLeft(bodyEmittedClass) { (asm, body) =>
-      // if we have an inner option type, unwrap the option
-      // and pass it to the class builder so we can get proper
-      // definitions of the inner type in the swagger model
-      val bodyType = body.innerOptionType.getOrElse(body.typ).asInstanceOf[Class[_]]
-
-      asm.defineField(body.name, new TypeDescription.Generic.OfNonGenericType.ForLoadedType(bodyType), Visibility.PUBLIC)
-    }
-
-    bodyFields.make().load(getClass.getClassLoader).getLoaded
-  }
-
-  /**
-   * Creates a fake object for swagger to reflect upon
-   *
-   * @param bodyElements
-   * @param name
-   * @return
-   */
-  private def registerDynamicBody(bodyElements: List[BodyRequestParam], name: String): Option[Parameter] = {
-    if (bodyElements.isEmpty) {
-      return None
-    }
-
-    val className = name + "Body"
-
-    val bodyClass = dynamicClassBodies.getOrElse(className, emitBodyClassForElements(bodyElements, className))
-
-    dynamicClassBodies.put(className, bodyClass)
-
-    val schema = registerModel(bodyClass, Some(name))
-
-    Some(
-      new BodyParameter().name("body").schema(schema.toModel)
-    )
-  }
-
   def registerModel[T: TypeTag]: Property = {
     val paramType: Type = typeOf[T]
     if (paramType =:= TypeTag.Nothing.tpe) {
@@ -259,7 +250,7 @@ class FinatraSwagger(swagger: Swagger) {
   }
 
   def convertPath(path: String): String = {
-    FinatraSwagger.finatraRouteParamter.replaceAllIn(path, "{$1}")
+    FinatraSwagger.finatraRouteParameter.replaceAllIn(path, "{$1}")
   }
 
   def registerOperation(path: String, method: String, operation: Operation): Swagger = {
