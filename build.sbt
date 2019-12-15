@@ -6,6 +6,10 @@ scalaVersion := "2.12.10"
 
 crossScalaVersions := Seq("2.11.12", "2.12.10")
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
+lazy val twitterReleaseVersion = "19.12.0"
+
 lazy val swaggerUIVersion = SettingKey[String]("swaggerUIVersion")
 
 swaggerUIVersion := "3.24.3"
@@ -15,12 +19,23 @@ buildInfoPackage := "com.jakehschwartz.finatra.swagger"
 buildInfoKeys := Seq[BuildInfoKey](name, version, swaggerUIVersion)
 
 libraryDependencies ++= Seq(
-  "com.twitter" %% "finatra-http" % "19.12.0",
-  "io.swagger" % "swagger-core" % "1.6.0",
+  "com.twitter" %% "finatra-http" % twitterReleaseVersion,
+  "io.swagger" % "swagger-core" % "1.5.23",
   "io.swagger" %% "swagger-scala-module" % "1.0.6",
   "org.webjars" % "swagger-ui" % swaggerUIVersion.value,
   "net.bytebuddy" % "byte-buddy" % "1.10.5",
   "org.scalatest" %% "scalatest" % "3.1.0" % Test
+)
+
+val examplesTestLibs = Seq(
+  "com.twitter" %% "finatra-http" % twitterReleaseVersion % "test" classifier "tests",
+  "com.twitter" %% "inject-app" % twitterReleaseVersion % "test" classifier "tests",
+  "com.twitter" %% "inject-core" % twitterReleaseVersion % "test" classifier "tests",
+  "com.twitter" %% "inject-modules" % twitterReleaseVersion % "test" classifier "tests",
+  "com.twitter" %% "inject-server" % twitterReleaseVersion % "test" classifier "tests",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "org.scalatest" %% "scalatest" % "3.0.8"  % Test,
+  "org.mockito" % "mockito-all" % "1.10.19"  % Test
 )
 
 scalacOptions ++= Seq(
@@ -69,3 +84,8 @@ lazy val root = Project("finatra-swagger", file("."))
 
 lazy val example = Project("hello-world-example", file("examples/hello-world"))
   .dependsOn(root)
+  .settings(libraryDependencies ++= examplesTestLibs)
+  .settings(
+    parallelExecution in Test := true,
+    testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oDF"),
+  )
