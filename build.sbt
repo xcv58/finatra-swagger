@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "io.swagger" %% "swagger-scala-module" % "1.0.6",
   "org.webjars" % "swagger-ui" % swaggerUIVersion.value,
   "net.bytebuddy" % "byte-buddy" % "1.10.5",
-  "org.scalatest" %% "scalatest" % "3.1.0" % Test
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test
 )
 
 val examplesTestLibs = Seq(
