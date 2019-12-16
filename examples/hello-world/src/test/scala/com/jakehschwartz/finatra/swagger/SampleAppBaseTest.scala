@@ -15,6 +15,9 @@ trait SampleAppBaseTest extends FeatureTest with Matchers {
   def stage: Stage = Stage.DEVELOPMENT
   override def server: EmbeddedHttpServer
 
+  // see https://twitter.github.io/finatra/user-guide/testing/feature_tests.html#sharing-a-server-fixture-between-many-feature-tests
+  // for best practices in sharing a server fixture between tests
+
   protected def makeServer(serverName: String): EmbeddedHttpServer = new EmbeddedHttpServer(
     twitterServer = new SampleApp { override val name: String = serverName },
     stage = stage
