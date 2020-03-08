@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.{JavaType, ObjectMapper}
 import com.google.inject.{Inject => GInject}
 import com.jakehschwartz.finatra.swagger.SchemaUtil._
 import com.twitter.finagle.http.Request
-import com.twitter.finatra.request.{FormParam, QueryParam, RouteParam, Header => HeaderParam}
+import com.twitter.finatra.http.annotations.{FormParam, QueryParam, RouteParam, Header => HeaderParam}
 import io.swagger.converter.{ModelConverter, ModelConverterContext, ModelConverters}
 import io.swagger.jackson.ModelResolver
 import io.swagger.models._

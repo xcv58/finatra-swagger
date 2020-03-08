@@ -8,7 +8,7 @@ crossScalaVersions := Seq("2.11.12", "2.12.10")
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-lazy val twitterReleaseVersion = "20.1.0"
+lazy val twitterReleaseVersion = "20.3.0"
 
 lazy val swaggerUIVersion = SettingKey[String]("swaggerUIVersion")
 
