@@ -13,7 +13,7 @@ For older versions, see the original repository by [xiaodongw](https://github.co
 
 The major and minor version of the library matches the Finatra major and minor version:
 ````sbt
-libraryDependencies += "com.jakehschwartz" %% "finatra-swagger" % "20.3.0"
+libraryDependencies += "com.jakehschwartz" %% "finatra-swagger" % "20.4.0"
 ````
 
 First, create a subclass of a SwaggerModule
@@ -57,7 +57,7 @@ object SampleApp extends HttpServer {
 ````
 Lastly, configure the endpoints using the `SwaggerRouteDSL`
 ````scala
-class SampleController@Inject()(s: Swagger) extends SwaggerController {
+class SampleController @Inject()(s: Swagger) extends SwaggerController {
   implicit protected val swagger = s
 
   getWithDoc("/students/:id") { o =>

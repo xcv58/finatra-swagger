@@ -2,13 +2,13 @@ name := "finatra-swagger"
 
 organization := "com.jakehschwartz"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.11"
 
-crossScalaVersions := Seq("2.11.12", "2.12.10")
+crossScalaVersions := Seq("2.11.12", "2.12.11")
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-lazy val twitterReleaseVersion = "20.3.0"
+lazy val twitterReleaseVersion = "20.4.0"
 
 lazy val swaggerUIVersion = SettingKey[String]("swaggerUIVersion")
 
