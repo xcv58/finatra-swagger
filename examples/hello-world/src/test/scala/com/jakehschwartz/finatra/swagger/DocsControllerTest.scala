@@ -1,5 +1,6 @@
 package com.jakehschwartz.finatra.swagger
 
+import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.http.{Response, Status}
 import com.twitter.finatra.http.EmbeddedHttpServer
 
@@ -23,4 +24,10 @@ class DocsControllerTest extends SampleAppBaseTest {
     server.httpGet(swaggerUrl, andExpect = Status.Ok)
   }
 
+  test("Startup and be healthy") {
+    server.assertStarted()
+    server.assertHealthy()
+    server.close(20.seconds)
+    server.assertCleanShutdown()
+  }
 }
