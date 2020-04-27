@@ -88,4 +88,13 @@ lazy val example = Project("hello-world-example", file("examples/hello-world"))
   .settings(
     parallelExecution in Test := true,
     testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oDF"),
+    javaOptions ++= Seq(
+      "-Xss8M",
+      "-Xms512M",
+      "-Xmx2G"
+    ),
+    javaOptions in Test ++= Seq(
+      "-Dlog.service.output=/dev/stdout",
+      "-Dlog.access.output=/dev/stdout",
+      "-Dlog_level=DEBUG")
   )
