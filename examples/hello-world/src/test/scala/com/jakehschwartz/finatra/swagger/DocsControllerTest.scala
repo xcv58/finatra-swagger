@@ -13,8 +13,7 @@ class DocsControllerTest extends SampleAppBaseTest {
     s"/docs/swagger-ui/${BuildInfo.swaggerUIVersion}/index.html?url=/swagger.json"
 
   test("sampleController: docs endpoint should return 307") {
-    val expectedLocation: String =
-      s"http://${server.externalHttpHostAndPort}$swaggerUrl"
+    val expectedLocation: String = swaggerUrl
     val response: Response =
       server.httpGet("/docs", andExpect = Status.TemporaryRedirect)
     response.headerMap("Location") shouldBe expectedLocation
