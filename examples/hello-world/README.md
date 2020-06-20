@@ -3,7 +3,7 @@
 ## Usage
 
 ```shell
-cd examples/hello-world
+sbt "project hello-world-example" run
 ```
 
 You could visit below URLs for the Swagger UI and JSON endpoint if the command executes successfully:
