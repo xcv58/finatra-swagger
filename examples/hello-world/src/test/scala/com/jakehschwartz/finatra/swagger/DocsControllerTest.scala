@@ -23,6 +23,10 @@ class DocsControllerTest extends SampleAppBaseTest {
     server.httpGet(swaggerUrl, andExpect = Status.Ok)
   }
 
+  test("sampleController: /swagger.json should be returned") {
+    server.httpGet("/swagger.json", andExpect = Status.Ok)
+  }
+
   test("Startup and be healthy") {
     server.assertStarted()
     server.assertHealthy()
