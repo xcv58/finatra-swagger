@@ -3,13 +3,12 @@ package com.jakehschwartz.finatra.swagger
 import java.io.BufferedInputStream
 import java.util.Date
 
-import javax.activation.MimetypesFileTypeMap
-import javax.inject.{Inject, Singleton}
 import com.twitter.finagle.http.{Message, Request}
 import com.twitter.finatra.http.Controller
 import com.twitter.inject.annotations.Flag
 import io.swagger.models.Swagger
-import io.swagger.util.Json
+import javax.activation.MimetypesFileTypeMap
+import javax.inject.{Inject, Singleton}
 import org.apache.commons.io.FilenameUtils
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 
@@ -17,18 +16,19 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class DocsController @Inject()(swagger: Swagger,
-                               @Flag("swagger.docs.endpoint") endpoint: String) extends Controller {
+                               @Flag("swagger.docs.endpoint") endpoint: String)
+    extends Controller {
 
   get("/swagger.json") { _: Request =>
     response
-      .ok(Json.mapper.writeValueAsString(swagger))
+      .ok(SwaggerObjectMapperFactory.jsonFactory.writeValueAsString(swagger))
       .contentTypeJson
   }
 
   get(s"$endpoint") { _: Request =>
-    response
-      .temporaryRedirect
-      .location(s"$endpoint/swagger-ui/${BuildInfo.swaggerUIVersion}/index.html?url=/swagger.json")
+    response.temporaryRedirect
+      .location(
+        s"$endpoint/swagger-ui/${BuildInfo.swaggerUIVersion}/index.html?url=/swagger.json")
   }
 
   private val defaultExpireTimeMillis: Long = 86400000L // 1 day
@@ -37,7 +37,8 @@ class DocsController @Inject()(swagger: Swagger,
   get(s"$endpoint/:*") { request: Request =>
     val resourcePath = request.getParam("*")
 
-    val webjarsResourceURI: String = s"/META-INF/resources/webjars/$resourcePath"
+    val webjarsResourceURI: String =
+      s"/META-INF/resources/webjars/$resourcePath"
     if (isDirectoryRequest(webjarsResourceURI)) {
       response.forbidden
     } else {
@@ -54,19 +55,24 @@ class DocsController @Inject()(swagger: Swagger,
                 val filename = getFileName(webjarsResourceURI)
                 val body = new BufferedInputStream(inputStream)
 
-                response
-                  .ok
+                response.ok
                   .body(body)
                   .header("ETag", eTagName)
-                  .header("Expires", Message.httpDateFormat(new Date(System.currentTimeMillis() + defaultExpireTimeMillis)))
-                  .header("Last-Modified",  Message.httpDateFormat(new Date(System.currentTimeMillis())))
-                  .header("Cache-Control", s"max-age=${defaultExpireTimeMillis / 1000}, must-revalidate")
+                  .header(
+                    "Expires",
+                    Message.httpDateFormat(new Date(
+                      System.currentTimeMillis() + defaultExpireTimeMillis)))
+                  .header("Last-Modified",
+                          Message.httpDateFormat(
+                            new Date(System.currentTimeMillis())))
+                  .header(
+                    "Cache-Control",
+                    s"max-age=${defaultExpireTimeMillis / 1000}, must-revalidate")
                   .contentType(getContentType(filename))
               } finally {
                 inputStream.close()
               }
-            }
-            else response.notFound
+            } else response.notFound
           }
       }
     }
@@ -84,7 +90,8 @@ class DocsController @Inject()(swagger: Swagger,
   private def getETagName(webjarsResourceURI: String): String = {
     val tokens: Array[String] = webjarsResourceURI.split("/")
     if (tokens.length < 7) {
-      throw new IllegalArgumentException("insufficient URL has given: " + webjarsResourceURI)
+      throw new IllegalArgumentException(
+        "insufficient URL has given: " + webjarsResourceURI)
     }
     val version: String = tokens(5)
     val fileName: String = tokens(tokens.length - 1)
@@ -94,15 +101,19 @@ class DocsController @Inject()(swagger: Swagger,
 
   private def checkETagMatch(request: Request, eTagName: String): Boolean = {
     request.headerMap.get("If-None-Match") match {
-      case None => false
+      case None        => false
       case Some(token) => token == eTagName
     }
   }
 
-  val dateParser: DateTimeFormatter = DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
+  val dateParser: DateTimeFormatter =
+    DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
   private def checkLastModify(request: Request): Boolean = {
-    request.headerMap.get("If-Modified-Since").map(dateParser.parseDateTime).map(_.getMillis) match {
-      case None => false
+    request.headerMap
+      .get("If-Modified-Since")
+      .map(dateParser.parseDateTime)
+      .map(_.getMillis) match {
+      case None       => false
       case Some(last) => last - System.currentTimeMillis > 0L
     }
   }
