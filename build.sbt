@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   // "io.swagger" % "swagger-core" % "1.6.1",
   "io.swagger" %% "swagger-scala-module" % "1.0.6",
   // "io.swagger.core.v3" % "swagger-core" % "2.1.3",
-  "io.swagger.core.v3" % "swagger-core" % "2.0.10",
+  "io.swagger.core.v3" % "swagger-core" % "2.1.0",
   // "com.github.swagger-akka-http" % "swagger-scala-module" % "2.1.2",
   // "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.1.2",
   "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
