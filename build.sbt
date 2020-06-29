@@ -11,6 +11,10 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 lazy val twitterReleaseVersion = "20.6.0"
 lazy val jacksonVersion = "2.10.4"
 
+// lazy val jacksonVersion = "2.11.0"
+// lazy val jacksonVersion = "2.11.0.rc1"
+// lazy val jacksonVersion = "2.10.4"
+
 lazy val swaggerUIVersion = SettingKey[String]("swaggerUIVersion")
 
 swaggerUIVersion := "3.24.3"
@@ -26,8 +30,12 @@ libraryDependencies ++= Seq(
     "com.fasterxml.jackson.datatype",
     "com.fasterxml.jackson.module"
   ),
-  "io.swagger" % "swagger-core" % "1.6.1",
+  // "io.swagger" % "swagger-core" % "1.6.1",
   "io.swagger" %% "swagger-scala-module" % "1.0.6",
+  // "io.swagger.core.v3" % "swagger-core" % "2.1.3",
+  "io.swagger.core.v3" % "swagger-core" % "2.0.0",
+  // "com.github.swagger-akka-http" % "swagger-scala-module" % "2.1.2",
+  // "com.github.swagger-akka-http" %% "swagger-scala-module" % "2.1.2",
   "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
   "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion,
   "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
